@@ -1,0 +1,12 @@
+get http://localhost:6000/user-api/users
+
+###post req to create user
+post http://localhost:6000/user-api/user
+Content-Type: application/json
+
+{
+    "name":"bhanu",
+    "age":30,
+    "email":"bhanu@mail.com",
+    "city":"hyderabad"
+}
