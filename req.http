@@ -1,12 +1,41 @@
 get http://localhost:6000/user-api/users
 
-###post req to create user
+###post req to create user(user regitration)
 post http://localhost:6000/user-api/user
 Content-Type: application/json
 
 {
-    "name":"bhanu",
-    "age":30,
-    "email":"bhanu@mail.com",
-    "city":"hyderabad"
+    "username":"bhanu",
+    "password":"bhanu",
+    "city":"hyderabad",
+    "age":25
+   
 }
+
+
+###post req to user login(user authentication)
+post http://localhost:6000/user-api/login
+Content-Type: application/json
+
+{
+    "username":"bhanu",
+    "password":"bhanu"   
+}
+
+
+
+###post req to create user
+put http://localhost:6000/user-api/user
+Content-Type: application/json
+
+{
+     "_id": "67361373300f82e43f4b6105",
+    "name":"bhanu",
+    "age":35,
+    "email":"bhanu@mail.com"
+   
+}
+
+
+###delete user 
+delete http://localhost:6000/user-api/user/67361373300f82e43f4b6105
