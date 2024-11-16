@@ -1,4 +1,5 @@
 get http://localhost:6000/user-api/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJoYW51IiwiaWF0IjoxNzMxNzY3MTAwLCJleHAiOjE3MzE3NjcyMDB9.E7qtiUvxStufCq0ERU2EClFGww_OhRTyLj9gA9Uykzw
 
 ###post req to create user(user regitration)
 post http://localhost:6000/user-api/user
@@ -39,3 +40,26 @@ Content-Type: application/json
 
 ###delete user 
 delete http://localhost:6000/user-api/user/67361373300f82e43f4b6105
+
+
+###
+get http://localhost:6000/user-api/public
+
+###
+get http://localhost:6000/user-api/protected
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJoYW51IiwiaWF0IjoxNzMxNzY2MzY4LCJleHAiOjE3MzE3NjYzOTh9.uKoPM4yqcOva4npazHX_en5uOC9zTiSX3PWscubiWJ0
+
+
+
+
+###create emp
+post http://localhost:6000/emp-api/emp
+Content-Type: application/json
+
+{
+    "name":"emp1",
+    "age":21,
+    "skills":["css","react","angular"],
+    "exp":[{"companyName":"Wipro","yrs":3},{"companyName":"TCS","yrs":2}],
+    "address":{"city":"hyderabad","street":"kphb"}
+}

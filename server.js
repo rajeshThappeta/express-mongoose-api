@@ -2,6 +2,7 @@
 const exp=require('express')
 const app=exp();
 const userApp=require('./APIs/userApi')
+const empApp=require('./APIs/empApi')
 
 const mongoose=require('mongoose');
 
@@ -18,6 +19,7 @@ mongoose.connect('mongodb://localhost:27017/vnrb2mongoose')
 
 //if path start with user-api, send req to userApp
 app.use('/user-api',userApp)
+app.use("/emp-api",empApp)
 
 
 //error handling middleware

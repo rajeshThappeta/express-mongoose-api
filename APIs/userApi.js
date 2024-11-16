@@ -1,18 +1,18 @@
 const exp = require("express");
 const userApp = exp.Router();
 const expressAsyncHandler = require("express-async-handler");
-const UserModel=require('../models/userModel')
-const bcryptjs=require('bcryptjs')
-const jwt=require('jsonwebtoken')
+const UserModel = require("../models/userModel");
+const bcryptjs = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const verifyToken = require("../middlewares/verifyToken");
 
 //add body parser middleware
 userApp.use(exp.json());
 
-
-
 //user api
 userApp.get(
   "/users",
+  verifyToken,
   expressAsyncHandler(async (req, res) => {
     //get all users from users collection
     let usersList = await UserModel.find();
@@ -28,9 +28,9 @@ userApp.post(
     //get new user object
     const newUser = req.body;
     //hash the password
-    const hashedPassword=await bcryptjs.hash(newUser.password,5)
+    const hashedPassword = await bcryptjs.hash(newUser.password, 5);
     //replace plain password with hashed password
-    newUser.password=hashedPassword;
+    newUser.password = hashedPassword;
     //create document for new user
     const userDocument = new UserModel(newUser);
     //console.log(userDocument)
@@ -43,34 +43,43 @@ userApp.post(
 );
 
 //user login route
-userApp.post('/login',expressAsyncHandler(async(req,res)=>{
-
+userApp.post(
+  "/login",
+  expressAsyncHandler(async (req, res) => {
     //get user cred obj from client
-    const userCredObj=req.body;
+    const userCredObj = req.body;
     //verify username
-    let userInDB=await UserModel.findOne({username:userCredObj.username})
-    console.log(userInDB)
+    let userInDB = await UserModel.findOne({ username: userCredObj.username });
+    console.log(userInDB);
     //if username not found
-    if(userInDB===null){
-      res.send({message:"Invalid username"})
+    if (userInDB === null) {
+      res.send({ message: "Invalid username" });
     }
     //if user existed,compare passwords
-    else{
-     let result=await  bcryptjs.compare(userCredObj.password,userInDB.password)
-     //if passwords not matched
-     if(result===false){
-      res.send({message:"Invalid password"})
-     }//if passwords are matched
-     else{
-      //create JWT token
-      let signedToken=jwt.sign({username:userInDB.username},'abcdef',{expiresIn:'1d'})
-      //send res
-      res.send({message:"login success",token:signedToken,payload:userInDB})
-     }
+    else {
+      let result = await bcryptjs.compare(
+        userCredObj.password,
+        userInDB.password
+      );
+      //if passwords not matched
+      if (result === false) {
+        res.send({ message: "Invalid password" });
+      } //if passwords are matched
+      else {
+        //create JWT token
+        let signedToken = jwt.sign({ username: userInDB.username }, "abcdef", {
+          expiresIn: 100,
+        });
+        //send res
+        res.send({
+          message: "login success",
+          token: signedToken,
+          payload: userInDB,
+        });
+      }
     }
-}))
-
-
+  })
+);
 
 //update user
 userApp.put(
@@ -95,22 +104,32 @@ userApp.put(
   })
 );
 
-
 //delete user
-userApp.delete('/user/:_id',expressAsyncHandler(async(req,res)=>{
+userApp.delete(
+  "/user/:_id",
+  expressAsyncHandler(async (req, res) => {
     //get name from url
-   // const nameOfUrl=req.params.name;
-   const _id=req.params._id;
+    // const nameOfUrl=req.params.name;
+    const _id = req.params._id;
     //delete
     //let deletedUser=await UserModel.findOneAndDelete({name:nameOfUrl})
-    let deletedUser=await UserModel.findByIdAndDelete(_id)
+    let deletedUser = await UserModel.findByIdAndDelete(_id);
     //send res
-    res.send({messaeg:"user removed",payload:deletedUser})
-}))
+    res.send({ messaeg: "user removed", payload: deletedUser });
+  })
+);
+
+//public route( Cab ne accessible by every user)
+userApp.get("/public", (req, res) => {
+  res.send({ message: "This is public info" });
+});
+//protected route(this can be accessible only by authenticated users)
+userApp.get("/protected", verifyToken, (req, res) => {
+  res.send({ message: "This is protected info" });
+});
 
 //export userApp
 module.exports = userApp;
-
 
 //encryption(reversable)
 //hashing (irreverable)
